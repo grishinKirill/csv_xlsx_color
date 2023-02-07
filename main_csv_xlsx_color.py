@@ -99,17 +99,13 @@ for i in range(1,col_len):
 
 def check_accuracy(array):
 	for i in range(1,col_len):
-		#result = array[i].value.split(' ')
-		result = re.search(r'\d{1,}',array[i].value)
-		print(result[0])
-		"""
-		val_average = float(result[2])
-		val_max = float(re.search(r'\f{1,}',result[4])[0])
+		val_average = float(array[i].value.split(' ')[2])
+		val_max = float(re.search(r'\d{1,}.\d{1,}\]{1}',array[i].value)[0][0:-1])
+		#print(f'val = \'{array[i].value}\' av = {val_average}  max = {val_max}')
 		if val_average < 20 and val_max <100: array[i].font = Font(color=color_good)
 		#elif val >=-80 and val < -70: col_range[i].font = Font(color=color_not_good_not_bad)
 		else: array[i].font = Font(color=color_bad)
-		"""
-
+	
 #	for both h_accuracy and v_accuracy
 #	requirements are the same and listed 
 #	in check_accuracy function
@@ -119,27 +115,5 @@ check_accuracy(ws['Q:Q'])
 #	R:R 	H_ACCUR
 check_accuracy(ws['R:R'])
 
-"""for i in range(1,col_len):
-	result = col_range[i].value.split(' ')
-	val_average = float(result[2])
-	val_max = float(re.search(r'\d{1,}',result[5])[0])
-	#val = float(re.search(r'\S{1,}\s',col_range[i].value)[0])
-	#print(val_max)
-	#print("i=",i,":",val)
-	if val_average < 20 and val_max <100: col_range[i].font = Font(color=color_good)
-	#elif val >=-80 and val < -70: col_range[i].font = Font(color=color_not_good_not_bad)
-	else: col_range[i].font = Font(color=color_bad)
-"""
-
-
-	# ----TESTS-----
-	#for i in range(1,col_len):
-#m = re.search(r'\d{1,}\.\d{1,} ','157.932 [10]')	
-#m = re.search(r'\S{1,}\s', '157.932 [10]')
-#print(float(m[0]))
-#print(m[0] if m else 'Not found')
-		# 157.9 [XY:127.8 Z: 92.7]
-	
-	# Пока обрезаю для теста вручную
 #print(os.time())
 wb.save(wb_name)
