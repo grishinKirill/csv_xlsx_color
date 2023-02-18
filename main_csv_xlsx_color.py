@@ -1,3 +1,17 @@
+#_______config__________________________________________
+val_fix_good = 100			# значение < будет плохим 	|
+val_float_good = 0 			# значение > будет плохим	|
+val_gps_good = 0 			# значение > будет плохим	|
+val_rtcm_good = 1.9			# значения между будут		|
+val_rtcm_bad = 4			#		желтенькими			|
+val_voltage_bad = 7.16		# значения между будут		|
+val_voltage_good = 7.5		#		желтыми				|
+val_rssi_good = -70			#							|
+val_rssi_bad = -80			#							|
+val_accuracy_av_good = 20	# оцениваем по среднему		|
+val_accuracy_max_good = 100	#	и максимальному			|
+#_______config__________________________________________|
+
 import openpyxl
 from openpyxl import Workbook, load_workbook
 #from openpyxl.utils import get_column_letter
@@ -13,8 +27,6 @@ if os.path.isfile(csv_file):
 else:
 	print('File "%s" not found' % csv_file)
 	quit()
-
-
 
 #Конвертируем csv в xlsx
 with open(csv_file) as f:
@@ -35,28 +47,28 @@ color_not_good_not_bad="00FF9900"
 col_range = ws['D:D']
 for i in range(1,col_len):
 	val=float(re.search(r'\d{1,}',col_range[i].value)[0])
-	if val == 100: col_range[i].font = Font(color=color_good, bold="True")
+	if val == val_fix_good: col_range[i].font = Font(color=color_good, bold="True")
 	else : col_range[i].font = Font(color=color_bad)
 
 #	E:E 	FLOAT STATUS GREEN-RED
 col_range = ws['E:E']
 for i in range(1,col_len):
 	val=float(re.search(r'\d{1,}',col_range[i].value)[0])
-	if val == 0: col_range[i].font = Font(color=color_good, bold="True")
+	if val == val_float_good: col_range[i].font = Font(color=color_good, bold="True")
 	else : col_range[i].font = Font(color=color_bad)
 
 #	F:F 	GPS STATUS GREEN-RED
 col_range = ws['F:F']
 for i in range(1,col_len):
 	val=float(re.search(r'\d{1,}',col_range[i].value)[0])
-	if val == 0: col_range[i].font = Font(color=color_good, bold="True")
+	if val == val_gps_good: col_range[i].font = Font(color=color_good, bold="True")
 	else : col_range[i].font = Font(color=color_bad)
 
 #	G:G 	DGPS STATUS GREEN-RED
 col_range = ws['G:G']
 for i in range(1,col_len):
 	val=float(re.search(r'\d{1,}',col_range[i].value)[0])
-	if val == 0: col_range[i].font = Font(color=color_good, bold="True")
+	if val == val_gps_good: col_range[i].font = Font(color=color_good, bold="True")
 	else : col_range[i].font = Font(color=color_bad)
 
 
@@ -64,8 +76,8 @@ for i in range(1,col_len):
 col_range = ws['H:H']
 for i in range(1,col_len):
 	val = float(re.search(r'\S{1,}\s',col_range[i].value)[0])
-	if val < 1.9: col_range[i].font = Font(color=color_good)
-	elif val >=1.9 and val < 4: col_range[i].font = Font(color=color_not_good_not_bad)
+	if val < val_rtcm_good: col_range[i].font = Font(color=color_good)
+	elif val >=val_rtcm_good and val < val_rtcm_bad : col_range[i].font = Font(color=color_not_good_not_bad)
 	else: col_range[i].font = Font(color=color_bad)
 
 #	H:H 	VOLTAGE
@@ -73,23 +85,23 @@ col_range = ws['K:K']
 for i in range(1,col_len):
 	volt=col_range[i].value
 	val=float(volt.split('-')[1][0:-1])
-	if val < 7.16: col_range[i].font = Font(color=color_bad)
-	elif val >=7.16 and val < 7.5: col_range[i].font = Font(color=color_not_good_not_bad)
-	else: col_range[i].font = Font(color=color_good)
+	if val < val_voltage_bad: col_range[i].font = Font(color=color_bad)
+	elif val >=val_voltage_bad and val < val_voltage_good: col_range[i].font = Font(color=color_not_good_not_bad)
+	else: col_range[i].font = Font(color=color_good, bold="True")
 
 #	L:L 	RSSI
 col_range = ws['L:L']
 for i in range(1,col_len):
 	val=float(col_range[i].value.split(' ')[1])
-	if val >= -70: col_range[i].font = Font(color=color_good)
-	elif val >=-80 and val < -70: col_range[i].font = Font(color=color_not_good_not_bad)
+	if val >= val_rssi_good : col_range[i].font = Font(color=color_good, bold="True")
+	elif val >=val_rssi_bad and val < val_rssi_good: col_range[i].font = Font(color=color_not_good_not_bad)
 	else: col_range[i].font = Font(color=color_bad)
 
 def check_accuracy(array):
 	for i in range(1,col_len):
 		val_average = float(array[i].value.split(' ')[2])
 		val_max = float(re.search(r'\d{1,}.\d{1,}\]{1}',array[i].value)[0][0:-1])
-		if val_average < 20 and val_max <100: array[i].font = Font(color=color_good)
+		if val_average < val_accuracy_av_good and val_max < val_accuracy_max_good: array[i].font = Font(color=color_good, bold="True")
 		#elif val >=-80 and val < -70: col_range[i].font = Font(color=color_not_good_not_bad)
 		else: array[i].font = Font(color=color_bad)
 	
